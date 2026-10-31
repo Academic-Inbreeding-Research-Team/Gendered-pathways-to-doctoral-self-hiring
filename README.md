@@ -1,136 +1,132 @@
-# Figure plotting code and source data
+# Figure plotting code from source data
 
-This repository contains the R plotting code and exported source data for a study of gender differences in doctoral self-hiring, institutional hierarchy, career pathways and scholarly records before and after the first faculty appointment.
+R scripts for plotting Figures 1–4 and Extended Data Figures 1–3 from the accompanying Excel source data.
 
-The plotting script covers Figures 1–4 and Extended Data Figures 1–5. Each figure section reads its corresponding source data before constructing the panels and assembling the figure.
-
-## Scope
-
-This repository provides the code required to visualize the exported results. Statistical estimates, confidence intervals, density coordinates and medians are read from the source-data files.
-
-The script does not rerun regression models, coarsened exact matching, difference-in-differences analyses or event studies. The underlying individual-level analytical data and fitted model objects are not included.
+Each script reads exported results, applies the formatting needed for plotting, and assembles a multi-panel figure. Estimates and confidence intervals are read from the workbooks; exported density curves are plotted directly. The scripts do not refit statistical models or require person-level data, `.RData` files, or the original analysis environment.
 
 ## Repository structure
 
+Keep the four source-data folders beside the code folder:
+
 ```text
-.
-├── plot_all_figures.R
-├── source_data/
-│   ├── 1a.xlsx
-│   ├── 1b.xlsx
-│   ├── ...
-│   ├── ED4d.xlsx
-│   ├── ED5b&5c.xlsx
-│   └── ED5d&5e.xlsx
-└── README.md
+repository/
+├── plot_code/
+│   ├── Fig1.R
+│   ├── Fig2.R
+│   ├── Fig3.R
+│   ├── Fig4.R
+│   ├── EDFig1.R
+│   ├── EDFig2.R
+│   └── EDFig3.R
 ```
 
-Files beginning with a figure number correspond to main-figure panels. Files beginning with `ED` correspond to Extended Data panels. Some workbooks contain multiple worksheets or results for more than one panel.
-
-Worksheet names and column names should be preserved because the script uses them to identify the plotting inputs.
+Preserve source folder names, file names, capitalization, and worksheet names. Existing PDF/TIFF figures serve as references and are not read at runtime. Extended Data Table 1 is outside the scope of these seven scripts.
 
 ## Requirements
 
-- R version 4.1.0 or later
-- ggplot2 version 3.4.0 or later
-- patchwork version 1.2.0 or later
-- Cairo support for PDF export
-
-Install the required R packages once:
+Install the dependencies in R:
 
 ```r
 install.packages(c(
-  "readxl",
-  "dplyr",
-  "tidyr",
-  "tibble",
-  "ggplot2",
-  "patchwork",
-  "scales",
-  "gridExtra",
-  "cowplot",
-  "ggrepel",
-  "sf",
-  "rnaturalearth",
-  "rnaturalearthdata"
+  "readxl", "dplyr", "tidyr", "ggplot2", "patchwork", "scales",
+  "gridExtra", "cowplot", "ggrepel",
+  "sf", "rnaturalearth", "rnaturalearthdata"
 ))
 ```
 
-The script does not install packages automatically. The `grid` and `grDevices` packages are included with R.
+`grid` is included with R. Figure 1 additionally uses the mapping and layout packages above, including the medium-resolution Natural Earth basemap supplied through `rnaturalearth` and `rnaturalearthdata`.
 
-## Running the code
+Use a version of `patchwork` that provides `free()`, which is called by Figure 2. Package versions have not been pinned, and a tested R/package environment is not yet documented.
 
-Keep `plot_all_figures.R` beside the `source_data` directory.
+## Run the scripts
 
-To run all figures from the command line:
-
-```bash
-Rscript plot_all_figures.R
-```
-
-By default, outputs are written to a new `figures` directory. The script produces PDF and PNG files and a `plotting_validation.csv` report.
-
-To select particular figures:
-
-```bash
-Rscript plot_all_figures.R --figures=Fig1,Fig4,EDFig1,EDFig4
-```
-
-To specify the input and output directories:
-
-```bash
-Rscript plot_all_figures.R --data-dir=source_data --output-dir=figure_outputs
-```
-
-To export PDFs only:
-
-```bash
-Rscript plot_all_figures.R --formats=pdf
-```
-
-Alternatively, run the script from R or RStudio:
+In an interactive R session, set the working directory to the repository root and run the script for the desired figure:
 
 ```r
-source("plot_all_figures.R")
-run_figures(root = ".")
+source("plot_code/Fig1.R", encoding = "UTF-8")
+source("plot_code/Fig2.R", encoding = "UTF-8")
+source("plot_code/Fig3.R", encoding = "UTF-8")
+source("plot_code/Fig4.R", encoding = "UTF-8")
+source("plot_code/EDFig1.R", encoding = "UTF-8")
+source("plot_code/EDFig2.R", encoding = "UTF-8")
+source("plot_code/EDFig3.R", encoding = "UTF-8")
 ```
 
-Use a new output directory for each run. Existing output files and validation reports are not overwritten.
+Alternatively, set the working directory to `plot_code/` and run, for example, `source("Fig1.R", encoding = "UTF-8")`. Each script checks the working directory first and then its parent for the source-data folder. Paths are resolved from the working directory, not from the location of the script itself.
 
-## Outputs and validation
+For a different directory layout, set `DATA_ROOT` in the script to the directory containing the four source-data folders. No personal absolute paths are embedded in the code.
 
-The script checks required inputs and confidence intervals before export. The validation report records whether each figure was exported, blocked by incomplete source data or affected by an execution error.
+Use a fresh R session for each script when checking reproducibility. Each script defines its plotting objects, but some object names are reused across figures.
 
-Incomplete figures are not exported by default. For inspection only, incomplete previews can be requested with:
+## Figure objects and export
 
-```bash
-Rscript plot_all_figures.R --allow-incomplete
+The scripts display the assembled figures and leave the following objects in the R session:
+
+| Script | Final figure object |
+| --- | --- |
+| `Fig1.R` | `FIG1` |
+| `Fig2.R` | `P_FIG2` |
+| `Fig3.R` | `P_FIG3` |
+| `Fig4.R` | `P_FIG4` |
+| `EDFig1.R` | `P_ED1` |
+| `EDFig2.R` | `P_EDFIG2` |
+| `EDFig3.R` | `P_EDFIG3` |
+
+The scripts contain no explicit figure-export calls and do not overwrite Excel inputs. To save a figure, export its object explicitly. For example, after running `Fig3.R`:
+
+```r
+ggplot2::ggsave(
+  filename = "Fig3_reproduced.pdf",
+  plot = P_FIG3,
+  device = "pdf",
+  width = 12,
+  height = 9,
+  units = "in",
+  bg = "white"
+)
 ```
 
-These previews have filenames ending in `_INCOMPLETE` and display a warning. They should not be used as complete reproductions of the manuscript figures.
+Figure size, graphics device, and installed fonts can affect text placement. In a non-interactive R session, the default graphics device may create `Rplots.pdf` when plots are drawn; select an explicit graphics device when running in batch mode.
 
-## Source-data items requiring completion
+## Source-data and panel mapping
 
-The currently supplied source data require the following additions or corrections for complete reproduction of all original panels and annotations:
+Panel letters refer to the final figures. Worksheet names are shown for multi-sheet workbooks or where explicitly selected in the code.
 
-| Figure or panel | Required addition or correction |
-|---|---|
-| Fig. 2b | Add `2b_probability.xlsx` with columns `hierarchy` and `total_pct`. The existing workbook contains pathway composition but not the overall self-hiring probabilities. |
-| Fig. 2e | Correct the gender labels in the `Fig2e_left` worksheet of `2e.xlsx`. Both density curves are currently labelled `Men`. |
-| Fig. 3d,e | Add `3de_slope_difference.xlsx` with columns `outcome`, `estimate`, `conf_low` and `conf_high`. The outcome labels must be `Publications` and `JIF`. |
-| Extended Data Fig. 2c | Add `ED2c_baseline.xlsx` with columns `pathway` and `baseline`, containing the overall adjusted pathway percentages. |
-| Extended Data Fig. 3a,b | Add a `display` worksheet to each workbook, containing `display_max`: the original upper display limit on the log-transformed outcome scale. |
-| Extended Data Fig. 5a | Add `ED5a.xlsx` with columns `label`, `unmatched` and `matched`, containing absolute standardized mean differences. |
+| Figure | Source folder | Panel-to-workbook mapping |
+| --- | --- | --- |
+| Figure 1 | `fig1&edfig1` | a: `1a.xlsx`; b: `1b.xlsx`; c: `1c.xlsx`; d: `1d.xlsx` (`Fig1d`) |
+| Figure 2 | `fig2&edfig2` | a: `2a.xlsx` (`top`, `bottom`); b: `2b.xlsx` (`Self_hiring_probability`, `Pathway_composition`); c: `2c.xlsx` (`fig2c`); d: `2d.xlsx` (`density_curves`) |
+| Figure 3 | `fig3` | a: `3a.xlsx` (`top`, `bottom`); b: `3b.xlsx`; c: `3c.xlsx`; d: `3d.xlsx` |
+| Figure 4 | `fig4&edfig3$edtable` | a: `4a.xlsx`; b: `4b.xlsx`; c: `4c.xlsx` (`Curves`); d: `4d.xlsx` (`Results`); e: `4e.xlsx` (`Results`) |
+| Extended Data Figure 1 | `fig1&edfig1` | a: `ED1a.xlsx`; b: `ED1b.xlsx` (`ed1b_selected`); c: `ED1c.xlsx` (`ed1c`); d: `ED1d.xlsx` (`ed1d`) |
+| Extended Data Figure 2 | `fig2&edfig2` | a: `ed2a.xlsx` (`ed2a`); b: `ed2b.xlsx` (`b_tab`); c: `ed2c.xlsx` (`top`, `bottom`); d: `ed2d.xlsx` (`curves`); e: `ed2e.xlsx` (`left`, `right`) |
+| Extended Data Figure 3 | `fig4&edfig3$edtable` | a: `ED3a.xlsx` (`Publications`, `JIF`); b: `ED3b.xlsx` (`Density`, `Median`); c: `ED3c.xlsx` (`Density`, `Median`); d: `ED3d.xlsx` (`Publications`, `JIF`); e: `ED3e.xlsx` (`Results`); f: `ED3f.xlsx` |
 
-These values should be exported from the original analyses. The plotting script does not infer missing estimates from the published figures or substitute results from other models.
+When no worksheet is specified, the first sheet is read. The `ed1c` and `ed1d` sheets already include overall cells; the separate `overall` sheets are not appended again.
 
-## Plotting conventions
+### Figure 4 panel titles
 
-- Women and men are generally shown in red and blue, respectively.
-- Positive women-minus-men contrasts indicate higher estimates among women.
-- Smaller global institutional rank numbers indicate higher-ranked institutions.
-- Larger SpringRank prestige scores indicate greater prestige.
-- Confidence intervals and outcome transformations follow the values supplied in the source data.
-- Export dimensions are specified separately for each figure in the R script.
+Figure 4 was renumbered from an earlier Figure 3. The supplied plotting script uses the final Figure 4 assignments, checked against `Fig4.pdf`:
 
-Font rendering and minor spacing may vary across operating systems and package versions.
+| Panel | Title |
+| --- | --- |
+| a | Scholarly differences before first faculty entry: self-hiring pathways versus non-self-hires |
+| b | Pre-entry differences in zero-publication probability and publication counts |
+| c | Scholarly differences before first faculty entry across institutional prestige |
+| d | Publication count differences before first faculty entry across comparison conditions |
+| e | Women–men differences in self-hiring probability after accounting for pre-entry scholarly records |
+
+## Reproduction notes
+
+- **Data and labels:** Excel source data determine plotted values. Panel titles and assignments were cross-checked against the supplied reference PDFs. Literal `\n` sequences in Excel labels are converted to line breaks.
+- **Figure 1:** The disciplinary, cohort, and geographic panels use `1b.xlsx`, `1c.xlsx`, and `1d.xlsx`, respectively, even though some objects in the original analysis script used different panel letters. Geographic outlines come from Natural Earth.
+- **Figure 2d:** Exported density coordinates are plotted directly. The original arrow and text positions were not exported, so their vertical positions are set relative to the maximum exported density.
+- **Figure 3d:** The rounded annotation `Gender × rank interaction: Wald P = 0.618` is transcribed from the supplied `fig3.pdf`. This overall interaction test is not included in `3d.xlsx` and is not recalculated from subgroup P values.
+- **Extended Data Figures 3b–c:** Density curves and medians are read directly from the workbooks. The original 99.5th-percentile horizontal-axis crop was not exported; the scripts display the full range of the exported density coordinates.
+- **Scope:** These scripts plot exported results. They do not reproduce statistical estimation or validate the underlying model results.
+
+## Validation status
+
+Source-file paths, worksheet names, panel titles, selected category labels, plot-object definitions, and delimiter balance have been checked. The seven scripts have **not yet been executed and visually validated in an R environment**; pixel-identical reproduction is not claimed.
+
+Before release, run each script in a clean R session, inspect all panels against the reference PDFs, and record `sessionInfo()` for the tested environment.
