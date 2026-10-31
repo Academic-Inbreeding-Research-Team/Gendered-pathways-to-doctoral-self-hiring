@@ -102,19 +102,3 @@ Panel letters refer to the final figures. Worksheet names are shown for multi-sh
 | Extended Data Figure 2 | `fig2&edfig2` | a: `ed2a.xlsx` (`ed2a`); b: `ed2b.xlsx` (`b_tab`); c: `ed2c.xlsx` (`top`, `bottom`); d: `ed2d.xlsx` (`curves`); e: `ed2e.xlsx` (`left`, `right`) |
 | Extended Data Figure 3 | `fig4&edfig3$edtable` | a: `ED3a.xlsx` (`Publications`, `JIF`); b: `ED3b.xlsx` (`Density`, `Median`); c: `ED3c.xlsx` (`Density`, `Median`); d: `ED3d.xlsx` (`Publications`, `JIF`); e: `ED3e.xlsx` (`Results`); f: `ED3f.xlsx` |
 
-When no worksheet is specified, the first sheet is read. The `ed1c` and `ed1d` sheets already include overall cells; the separate `overall` sheets are not appended again.
-
-## Reproduction notes
-
-- **Data and labels:** Excel source data determine plotted values. Panel titles and assignments were cross-checked against the supplied reference PDFs. Literal `\n` sequences in Excel labels are converted to line breaks.
-- **Figure 1:** The disciplinary, cohort, and geographic panels use `1b.xlsx`, `1c.xlsx`, and `1d.xlsx`, respectively, even though some objects in the original analysis script used different panel letters. Geographic outlines come from Natural Earth.
-- **Figure 2d:** Exported density coordinates are plotted directly. The original arrow and text positions were not exported, so their vertical positions are set relative to the maximum exported density.
-- **Figure 3d:** The rounded annotation `Gender × rank interaction: Wald P = 0.618` is transcribed from the supplied `fig3.pdf`. This overall interaction test is not included in `3d.xlsx` and is not recalculated from subgroup P values.
-- **Extended Data Figures 3b–c:** Density curves and medians are read directly from the workbooks. The original 99.5th-percentile horizontal-axis crop was not exported; the scripts display the full range of the exported density coordinates.
-- **Scope:** These scripts plot exported results. They do not reproduce statistical estimation or validate the underlying model results.
-
-## Validation status
-
-Source-file paths, worksheet names, panel titles, selected category labels, plot-object definitions, and delimiter balance have been checked. The seven scripts have **not yet been executed and visually validated in an R environment**; pixel-identical reproduction is not claimed.
-
-Before release, run each script in a clean R session, inspect all panels against the reference PDFs, and record `sessionInfo()` for the tested environment.
