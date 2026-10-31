@@ -1,8 +1,4 @@
-# Extended Data Figure 2: plotting from published source data only.
-# Run from the submission root, or from this script's directory.
-# Keep the four source-data folders beside submission_plot_code.
-# No model fitting, input-file changes, or automatic file export.
-# Packages: readxl, dplyr, tidyr, ggplot2, patchwork, scales.
+
 library(readxl)
 library(dplyr)
 library(tidyr)
