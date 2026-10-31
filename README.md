@@ -104,18 +104,6 @@ Panel letters refer to the final figures. Worksheet names are shown for multi-sh
 
 When no worksheet is specified, the first sheet is read. The `ed1c` and `ed1d` sheets already include overall cells; the separate `overall` sheets are not appended again.
 
-### Figure 4 panel titles
-
-Figure 4 was renumbered from an earlier Figure 3. The supplied plotting script uses the final Figure 4 assignments, checked against `Fig4.pdf`:
-
-| Panel | Title |
-| --- | --- |
-| a | Scholarly differences before first faculty entry: self-hiring pathways versus non-self-hires |
-| b | Pre-entry differences in zero-publication probability and publication counts |
-| c | Scholarly differences before first faculty entry across institutional prestige |
-| d | Publication count differences before first faculty entry across comparison conditions |
-| e | Women–men differences in self-hiring probability after accounting for pre-entry scholarly records |
-
 ## Reproduction notes
 
 - **Data and labels:** Excel source data determine plotted values. Panel titles and assignments were cross-checked against the supplied reference PDFs. Literal `\n` sequences in Excel labels are converted to line breaks.
